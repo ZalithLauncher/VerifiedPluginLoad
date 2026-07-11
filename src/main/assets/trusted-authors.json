@@ -1,7 +1,94 @@
 {
   "format_version": 1,
   "list_version": 1,
-  "generated_at": "2026-07-11T00:00:00Z",
-  "expires_at": "2036-07-11T00:00:00Z",
-  "keys": []
+  "generated_at": "2026-07-11T18:23:04Z",
+  "expires_at": "2027-07-11T17:59:42Z",
+  "keys": [
+    {
+      "uuid": "7be93559-f639-4e28-ac6a-e0b00d7264ea",
+      "name": "MobileGL-Dev",
+      "type": "org",
+      "confidence": 2,
+      "description": "MobileGL-Dev is a small development team that maintains MobileGlues, MobileGL, etc.",
+      "web": "https://github.com/MobileGL-Dev",
+      "hashes": [
+        {
+          "value": "sha256:F856CDA0BE94640FC7196F6D3D60479952E3AD2C692016AC4E41B1899856B72C|sha1:F2951629FF5DE145562F228B505C06BFF630B52A",
+          "state": "banned",
+          "description": "A legacy certificate used by MobileGlues that is now not secure.",
+          "banned_at": "2026-07-11T18:06:34Z"
+        },
+        {
+          "value": "sha256:324F4EFAFF81632373DEC9BC714A904B64740249410B551B61805340E42FF5D5|sha1:615BC8B2741C24E7E5847B0C5C1D6816D5B0763A",
+          "state": "active",
+          "description": "The active certificate that MobileGL-Dev mainly uses."
+        }
+      ]
+    },
+    {
+      "uuid": "8e537183-5f07-42d3-a18c-cc479de164da",
+      "name": "BZLZHH",
+      "type": "person",
+      "confidence": 2,
+      "description": "A personal software developer who maintains MobileGlues, MobileGL, Krypton Wrapper, etc.",
+      "web": "https://bzlzhh.top",
+      "hashes": [
+        {
+          "value": "sha256:5DF162CEF5BFBDB308488250F70BF5215039CFB2596749DE0A7DF1D8023679F5|sha1:CC49C84FA18BF5045DB27D467A272E7C04E6DDDF",
+          "state": "active",
+          "description": "A legacy certificate used in earlier Krypton Wrapper,, which is still secure now."
+        },
+        {
+          "value": "sha256:21E122FE00230096880E5FE29CF25AC6643771CC880CA87EBCCE100A4A969050|sha1:FF286986291A3313762BB7A4E8A3FEC1EEA1D8B4",
+          "state": "active",
+          "description": "The active certificate used by BZLZHH."
+        }
+      ]
+    },
+    {
+      "uuid": "a90df9d4-58bb-4f53-a8f9-2c60554e7f6c",
+      "name": "aaaa派",
+      "type": "person",
+      "confidence": 1,
+      "description": "A relatively trusted community member.",
+      "web": "https://space.bilibili.com/1444275203",
+      "hashes": [
+        {
+          "value": "sha256:ECB4BAA3BDFFB0FB135318909042354FBA3311F1F2182A77F10AB8478D52BF6A|sha1:E4355F5E80AE35FFD1517BC945B17F15B68059B1",
+          "state": "active",
+          "description": "Imported from Zink + OSMesa 23.0.4_ap.apk by aaaa派."
+        }
+      ]
+    },
+    {
+      "uuid": "d35b38d1-3543-4ddb-9329-d96096f5e536",
+      "name": "FCL-Team",
+      "type": "org",
+      "confidence": 2,
+      "description": "The team behind Fold Craft Launcher.",
+      "web": "https://github.com/FCL-Team",
+      "hashes": [
+        {
+          "value": "sha256:BE114D96613F7375A510D836680B456C9D528D15B24C382B1137480F15894E5E|sha1:04A080A9C2A80A04CCDAA817BD6B9EAE5BA2C02A",
+          "state": "active",
+          "description": "Imported from Fold Craft Launcher APK."
+        }
+      ]
+    },
+    {
+      "uuid": "d54c3333-ad85-4adb-90b6-283dbd7df8dd",
+      "name": "ZalithLauncher",
+      "type": "person",
+      "confidence": 2,
+      "description": "The team behind Zalith Launcher.",
+      "web": "https://github.com/ZalithLauncher",
+      "hashes": [
+        {
+          "value": "sha256:851381B5EB6F169A2DA6E323FF674ACCC835C6FC47B15BBFD7920578E97B0689|sha1:BB05EC931239B5727CC1BB13B23914A8F78CD37B",
+          "state": "active",
+          "description": "Imported from ZalithLauncher-2.4.9_hotfix1-arm64-v8a.apk"
+        }
+      ]
+    }
+  ]
 }

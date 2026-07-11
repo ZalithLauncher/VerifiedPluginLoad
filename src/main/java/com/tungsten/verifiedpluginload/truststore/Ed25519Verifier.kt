@@ -12,7 +12,7 @@ internal interface TrustListSignatureVerifier {
 
 internal object Ed25519Verifier : TrustListSignatureVerifier {
     // This key is compiled into the library and is never replaced by downloaded content.
-    private const val VPL_TRUST_LIST_ROOT_PUBLIC_KEY = "xGnt0ttamxQLXQGLasD4u3ifcnQzUARm2nQMvFOJXeo="
+    private const val VPL_TRUST_LIST_ROOT_PUBLIC_KEY = "cJg3aZGuviwahhIn5wsMzuANnIJCp4NAe9jdVKztYNU="
 
     override fun verify(payload: ByteArray, signature: ByteArray): Boolean {
         val publicKey = try {
