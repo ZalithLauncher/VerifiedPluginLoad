@@ -1,6 +1,7 @@
 package com.tungsten.verifiedpluginload.update
 
 import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadConfig
+import com.tungsten.verifiedpluginload.api.TrustListMirror
 import com.tungsten.verifiedpluginload.model.TrustListRefreshResult
 import com.tungsten.verifiedpluginload.model.TrustListRefreshStatus
 import com.tungsten.verifiedpluginload.truststore.TrustListParseException
@@ -18,8 +19,8 @@ internal class TrustListUpdater(
     private val store: TrustListStore
 ) {
     fun refresh(forceFullDownload: Boolean = false): TrustListRefreshResult {
-        val listUrl = config.trustListUrl ?: return TrustListRefreshResult(TrustListRefreshStatus.NOT_CONFIGURED, null)
-        val signatureUrl = config.trustListSignatureUrl ?: return TrustListRefreshResult(TrustListRefreshStatus.NOT_CONFIGURED, null)
+        val mirrors = config.trustListMirrors
+        if (mirrors.isEmpty()) return TrustListRefreshResult(TrustListRefreshStatus.NOT_CONFIGURED, null)
         val active = store.loadOrCreate()
         // Never send an old ETag after recovering from a damaged current file: a 304 response
         // must not prevent the recovery path from obtaining a fresh signed payload.
@@ -29,21 +30,24 @@ internal class TrustListUpdater(
             null
         }
         return try {
-            when (val listResponse = download(URL(listUrl), etag, config.maxTrustListBytes)) {
-                is DownloadResult.NotModified -> TrustListRefreshResult(
-                    TrustListRefreshStatus.NOT_MODIFIED,
-                    store.loadOrCreate().trustList.listVersion
-                )
-                is DownloadResult.Content -> {
-                    val signatureResponse = download(URL(signatureUrl), null, 1_024)
-                    if (signatureResponse !is DownloadResult.Content) {
-                        TrustListRefreshResult(TrustListRefreshStatus.NETWORK_ERROR, null, "Signature endpoint did not return content")
-                    } else {
-                        val installed = store.installDownloaded(listResponse.bytes, signatureResponse.bytes, listResponse.etag)
-                        TrustListRefreshResult(TrustListRefreshStatus.UPDATED, installed.trustList.listVersion)
+            ParallelMirrorRace.firstSuccessful(
+                mirrors = mirrors,
+                download = { mirror -> downloadFromMirror(mirror, etag) },
+                accept = { response ->
+                    when (response) {
+                        is MirrorDownload.NotModified -> TrustListRefreshResult(
+                            TrustListRefreshStatus.NOT_MODIFIED,
+                            store.loadOrCreate().trustList.listVersion
+                        )
+                        is MirrorDownload.Content -> {
+                            val installed = store.installDownloaded(response.payload, response.signature, response.etag)
+                            TrustListRefreshResult(TrustListRefreshStatus.UPDATED, installed.trustList.listVersion)
+                        }
                     }
                 }
-            }
+            )
+        } catch (e: MirrorRaceException) {
+            resultForMirrorFailures(e.failures)
         } catch (e: TrustListSignatureException) {
             TrustListRefreshResult(TrustListRefreshStatus.REJECTED_SIGNATURE, null, e.message)
         } catch (e: TrustListParseException) {
@@ -54,6 +58,37 @@ internal class TrustListUpdater(
             TrustListRefreshResult(TrustListRefreshStatus.NETWORK_ERROR, null, e.message)
         } catch (e: Exception) {
             TrustListRefreshResult(TrustListRefreshStatus.STORAGE_ERROR, null, e.message)
+        }
+    }
+
+    private fun downloadFromMirror(mirror: TrustListMirror, etag: String?): MirrorDownload {
+        return when (val listResponse = download(mirror.listUrl, etag, config.maxTrustListBytes)) {
+            is DownloadResult.NotModified -> MirrorDownload.NotModified
+            is DownloadResult.Content -> {
+                val signatureResponse = download(mirror.signatureUrl, null, 1_024)
+                if (signatureResponse !is DownloadResult.Content) {
+                    throw IOException("Signature endpoint at ${mirror.prefix} did not return content")
+                }
+                MirrorDownload.Content(listResponse.bytes, signatureResponse.bytes, listResponse.etag)
+            }
+        }
+    }
+
+    private fun resultForMirrorFailures(failures: List<Exception>): TrustListRefreshResult {
+        val failure = failures.lastOrNull { it is TrustListRollbackException }
+            ?: failures.lastOrNull { it is TrustListSignatureException }
+            ?: failures.lastOrNull { it is TrustListParseException }
+            ?: failures.lastOrNull()
+        return when (failure) {
+            is TrustListRollbackException -> TrustListRefreshResult(TrustListRefreshStatus.REJECTED_ROLLBACK, null, failure.message)
+            is TrustListSignatureException -> TrustListRefreshResult(TrustListRefreshStatus.REJECTED_SIGNATURE, null, failure.message)
+            is TrustListParseException -> TrustListRefreshResult(TrustListRefreshStatus.REJECTED_SCHEMA, null, failure.message)
+            null, is IOException -> TrustListRefreshResult(
+                TrustListRefreshStatus.NETWORK_ERROR,
+                null,
+                failure?.message ?: "No trust-list mirror returned a usable response"
+            )
+            else -> TrustListRefreshResult(TrustListRefreshStatus.STORAGE_ERROR, null, failure.message)
         }
     }
 
@@ -95,5 +130,10 @@ internal class TrustListUpdater(
     private sealed interface DownloadResult {
         data class Content(val bytes: ByteArray, val etag: String?) : DownloadResult
         data object NotModified : DownloadResult
+    }
+
+    private sealed interface MirrorDownload {
+        data class Content(val payload: ByteArray, val signature: ByteArray, val etag: String?) : MirrorDownload
+        data object NotModified : MirrorDownload
     }
 }

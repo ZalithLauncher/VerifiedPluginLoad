@@ -50,7 +50,7 @@ internal class VerifiedPluginLoadImpl(
             initializationResult(store.loadOrCreate(), userStore.snapshot())
         }
 
-        if (config.trustListUrl == null) return initial
+        if (!config.isTrustListRemoteConfigured) return initial
 
         // A recovery path waits for a bounded update attempt; an already valid local list does not.
         return if (initial.trustListSource != TrustListSource.CURRENT) {

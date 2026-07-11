@@ -12,14 +12,15 @@ The root private key is a release-management secret. It must not be committed to
 
 VPL rejects unsigned content, schema violations, duplicate IDs or hashes, and list-version rollback. It stages both files, validates the staged pair again, then atomically replaces the active files while retaining the prior valid pair.
 
-For FoldCraftLauncher release builds, provide both URLs as Gradle properties:
+For FoldCraftLauncher release builds, provide a comma-separated set of mirror prefixes plus the two file-specific suffixes as Gradle properties:
 
 ```text
-vpl.trustListUrl=https://publisher.example/vpl/trusted-authors.json
-vpl.trustListSignatureUrl=https://publisher.example/vpl/trusted-authors.json.sig
+vpl.trustListUrlPrefixes=https://publisher-a.example/vpl,https://publisher-b.example/vpl
+vpl.trustListJsonSuffix=trusted-authors.json
+vpl.trustListSignatureSuffix=trusted-authors.json.sig
 ```
 
-If either property is omitted, the app deliberately stays on its signed local or built-in list rather than attempting an unauthenticated update.
+Every prefix must serve the same pair of files. VPL downloads pairs from all configured mirrors in parallel, uses the first pair that completes and passes signature, schema, and rollback checks, then cancels the remaining requests. If the configuration is incomplete, the app deliberately stays on its signed local or built-in list rather than attempting an unauthenticated update.
 
 ## Trust decisions
 
