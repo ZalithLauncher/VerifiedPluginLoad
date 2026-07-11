@@ -1,0 +1,13 @@
+# Gradle build state and generated outputs
+.gradle/
+build/
+
+# Android Studio and IntelliJ files
+.idea/
+*.iml
+local.properties
+
+# Packaged Android artifacts
+*.apk
+*.aab
+*.ap_
