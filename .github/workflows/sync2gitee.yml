@@ -1,0 +1,28 @@
+name: Sync GitHub to Gitee
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Mirror the GitHub repo to Gitee
+        if: github.repository == 'ZalithLauncher/VerifiedPluginLoad'
+        uses: Yikun/hub-mirror-action@v1.4
+        with:
+          src: github/ZalithLauncher
+          dst: gitee/FCL-Team
+          src_token: ${{ secrets.GITHUB_TOKEN }}
+          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+          dst_token: ${{ secrets.GITEE_TOKEN }}
+          static_list: 'VerifiedPluginLoad'
+          account_type: org
+          force_update: true
+          timeout: 300
+          debug: false
