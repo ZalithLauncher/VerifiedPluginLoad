@@ -1,7 +1,7 @@
 {
   "format_version": 1,
-  "list_version": 2,
-  "generated_at": "2026-07-12T02:39:35Z",
+  "list_version": 3,
+  "generated_at": "2026-07-12T02:47:05Z",
   "expires_at": "2027-07-12T17:59:42Z",
   "keys": [
     {
@@ -78,7 +78,7 @@
     {
       "uuid": "d54c3333-ad85-4adb-90b6-283dbd7df8dd",
       "name": "ZalithLauncher",
-      "type": "person",
+      "type": "org",
       "confidence": 2,
       "description": "The team behind Zalith Launcher.",
       "web": "https://github.com/ZalithLauncher",
