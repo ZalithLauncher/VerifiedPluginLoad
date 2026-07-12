@@ -22,9 +22,14 @@ internal class TrustListUpdater(
         val mirrors = config.trustListMirrors
         if (mirrors.isEmpty()) return TrustListRefreshResult(TrustListRefreshStatus.NOT_CONFIGURED, null)
         val active = store.loadOrCreate()
-        // Never send an old ETag after recovering from a damaged current file: a 304 response
-        // must not prevent the recovery path from obtaining a fresh signed payload.
-        val etag = if (!forceFullDownload && active.source == com.tungsten.verifiedpluginload.model.TrustListSource.CURRENT) {
+        // ETags are scoped to an origin. With multiple mirrors, always fetch content so a 304
+        // from one source cannot hide newer content from another source. Never send an old ETag
+        // after recovering from a damaged current file either.
+        val etag = if (
+            mirrors.size == 1 &&
+            !forceFullDownload &&
+            active.source == com.tungsten.verifiedpluginload.model.TrustListSource.CURRENT
+        ) {
             store.readMetadata().etag
         } else {
             null

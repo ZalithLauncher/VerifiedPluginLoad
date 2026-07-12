@@ -2,8 +2,6 @@
 
 `VerifiedPluginLoad` is the Android library that decides whether an installed plugin APK may supply native code to Fold Craft Launcher, Zalith Launcher, Pojav Glow·Worm and other launchers. It does not load plugins itself.
 
-The built-in `trusted-authors.json` is intentionally an empty, signed bootstrap list. A release must only add author certificate fingerprints after the corresponding publisher identity has been independently verified. This keeps the default behavior fail-closed instead of treating example or debug keys as production trust roots.
-
 ## Publishing a trust-list update
 
 The list payload is signed as its exact UTF-8 byte sequence with the Ed25519 key whose public half is compiled as `VPL_TRUST_LIST_ROOT_PUBLIC_KEY`. Publish the unchanged JSON bytes and a detached 64-byte Ed25519 signature, either as raw bytes or base64 text, at the two HTTPS URLs passed in `VerifiedPluginLoadConfig`.
@@ -11,14 +9,6 @@ The list payload is signed as its exact UTF-8 byte sequence with the Ed25519 key
 The root private key is a release-management secret. It must not be committed to this repository, bundled in an APK, or placed in launcher settings. Rotate it only by shipping a new launcher build containing the new public key.
 
 VPL rejects unsigned content, schema violations, duplicate IDs or hashes, and list-version rollback. It stages both files, validates the staged pair again, then atomically replaces the active files while retaining the prior valid pair.
-
-For FoldCraftLauncher release builds, provide a comma-separated set of mirror prefixes plus the two file-specific suffixes as Gradle properties:
-
-```text
-vpl.trustListUrlPrefixes=https://publisher-a.example/vpl,https://publisher-b.example/vpl
-vpl.trustListJsonSuffix=trusted-authors.json
-vpl.trustListSignatureSuffix=trusted-authors.json.sig
-```
 
 Every prefix must serve the same pair of files. VPL downloads pairs from all configured mirrors in parallel, uses the first pair that completes and passes signature, schema, and rollback checks, then cancels the remaining requests. If the configuration is incomplete, the app deliberately stays on its signed local or built-in list rather than attempting an unauthenticated update.
 

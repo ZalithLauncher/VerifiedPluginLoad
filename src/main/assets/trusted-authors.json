@@ -1,8 +1,8 @@
 {
   "format_version": 1,
-  "list_version": 1,
-  "generated_at": "2026-07-11T18:23:04Z",
-  "expires_at": "2027-07-11T17:59:42Z",
+  "list_version": 2,
+  "generated_at": "2026-07-12T02:39:35Z",
+  "expires_at": "2027-07-12T17:59:42Z",
   "keys": [
     {
       "uuid": "7be93559-f639-4e28-ac6a-e0b00d7264ea",
@@ -87,6 +87,21 @@
           "value": "sha256:851381B5EB6F169A2DA6E323FF674ACCC835C6FC47B15BBFD7920578E97B0689|sha1:BB05EC931239B5727CC1BB13B23914A8F78CD37B",
           "state": "active",
           "description": "Imported from ZalithLauncher-2.4.9_hotfix1-arm64-v8a.apk"
+        }
+      ]
+    },
+    {
+      "uuid": "c1982606-a706-4295-ad9e-d73f32b12cef",
+      "name": "Public",
+      "type": "org",
+      "confidence": 0,
+      "description": "Public certificates that can be used by everyone.",
+      "hashes": [
+        {
+          "value": "sha256:A40DA80A59D170CAA950CF15C18C454D47A39B26989D8B640ECD745BA71BF5DC|sha1:61ED377E85D386A8DFEE6B864BD85B0BFAA5AF81",
+          "state": "banned",
+          "description": "Imported from MT Manager.",
+          "banned_at": "2026-07-12T02:36:54Z"
         }
       ]
     }

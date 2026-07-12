@@ -5,6 +5,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadConfig
 import com.tungsten.verifiedpluginload.model.TrustListSource
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,6 +15,20 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class TrustListStoreInstrumentedTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Test
+    fun bundledTrustListHasValidSignatureAndStrictSchema() {
+        val payload = context.assets.open("trusted-authors.json").use { it.readBytes() }
+        val signature = context.assets.open("trusted-authors.json.sig").use { raw ->
+            Ed25519Verifier.decodeSignature(raw.readBytes())
+        }
+
+        assertNotNull("Bundled trust-list signature must be a valid 64-byte Ed25519 signature", signature)
+        assertTrue(Ed25519Verifier.verify(payload, signature!!))
+        val trustList = TrustListParser.parse(payload)
+        assertTrue(trustList.listVersion > 0)
+        assertTrue("Bundled trust list must not be an empty bootstrap list", trustList.authors.isNotEmpty())
+    }
 
     @Test
     fun invalidSignatureCannotReplaceCurrentTrustList() {
