@@ -1,0 +1,7 @@
+jdk:
+  - openjdk17
+
+install:
+  - if [ ! -f "./gradlew" ]; then gradle wrapper; fi
+  - chmod +x ./gradlew
+  - ./gradlew publishToMavenLocal

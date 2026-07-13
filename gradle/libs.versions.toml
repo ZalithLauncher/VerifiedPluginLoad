@@ -1,0 +1,15 @@
+[versions]
+compileSdk = "35"
+minSdk = "26"
+agp = "8.13.2"
+kotlin = "2.3.20"
+gson = "2.10.1"
+bcprov = "1.79"
+
+[libraries]
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+bcprov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bcprov" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
